@@ -28,4 +28,5 @@ to help me learn the basics of Haskell
 
 ## Resources Used
 
-[Recursion in Haskell](https://www.youtube.com/watch?v=p1m1TYnlRLg)
+[LearnXinYminutes](https://learnxinyminutes.com/haskell/)
+[Golden Ratio](https://www.mathsisfun.com/numbers/fibonacci-sequence.html)
