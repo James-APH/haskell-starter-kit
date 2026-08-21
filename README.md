@@ -8,9 +8,22 @@ to help me learn the basics of Haskell
 - Fizz-Buzz
 - Fibonacci
 - Factorial
-- Bubble Sort
-- Palindrome checker
-- String Reversal
+- Length\_
+- Head\_
+- Tail\_
+- Last\_
+- Count\_
+- Contains\_
+- Reverse\_
+- isEmpty\_
+- Take\_
+- Drop\_
+- Map\_
+- Filter\_
+- Foldl\_
+- Foldr\_
+- Zip\_
+- is Palindrome
 - Binary Search
 
 ## Simple CLI Applications
@@ -28,5 +41,6 @@ to help me learn the basics of Haskell
 
 ## Resources Used
 
-[LearnXinYminutes](https://learnxinyminutes.com/haskell/)
-[Golden Ratio](https://www.mathsisfun.com/numbers/fibonacci-sequence.html)
+[X in Y](https://learnxinyminutes.com/haskell/)
+[Haskell wiki](https://wiki.haskell.org/index.php?search=string+length&title=Special%3ASearch&wprov=acrw1_-1)
+[playground](https://play.haskell.org/)
