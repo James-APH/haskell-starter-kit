@@ -1,9 +1,6 @@
-main :: IO ()
-main = print (fac 5)
-
--- Naive Solution (I know)
+import BasicOps
 
 fac :: Integer -> Integer
 fac i
-    | i <= 0 = 1 -- Base Case
-    | otherwise = i * fac (i - 1)
+    | i <= 0 = 0
+    | otherwise = product_ [1 .. i]

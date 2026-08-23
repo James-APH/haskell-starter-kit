@@ -1,9 +1,9 @@
-main :: IO ()
-main = print (fizzbuzz 20)
+import BasicOps
 
 fizzbuzz :: Integer -> [String]
+fizzbuss 0 = "FizzBuzz"
 fizzbuzz i
-    | i <= 0 = [] -- Base Case
+    | i < 0 = []
     | rem i 3 == 0 && rem i 5 == 0 = fizzbuzz (i - 1) ++ ["FizzBuzz"]
     | rem i 3 == 0 = fizzbuzz (i - 1) ++ ["Fizz"]
     | rem i 5 == 0 = fizzbuzz (i - 1) ++ ["Buzz"]
