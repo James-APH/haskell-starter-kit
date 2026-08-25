@@ -1,0 +1,74 @@
+cabal-version: 3.0
+
+name:                haskell-starter-kit
+version:             0.1.0.0
+license:             MIT
+license-file:        LICENSE
+author:              James.APH
+maintainer:          jamzhuston@gmail.com
+category:            Learning
+build-type:          Simple
+
+extra-doc-files:
+    CHANGELOG.md
+    README.md
+
+common extensions
+    default-language: GHC2024
+
+common ghc-options
+    ghc-options:
+        -Wall
+        -Widentities
+
+common rts-options
+    ghc-options:
+        -rtsopts
+        -threaded
+        "-with-rtsopts=-N"
+
+library
+    import: extensions
+    import: ghc-options
+
+    hs-source-dirs:
+        src
+
+    exposed-modules:
+        OpsAndAlgorithms.BasicOps
+        PracticeProblems.BasicProblems
+
+    build-depends:
+        base ^>=4.22.0.0
+
+executable haskell-starter-kit
+    import: extensions
+    import: ghc-options
+    import: rts-options
+
+    main-is:
+        Main.hs
+
+    hs-source-dirs:
+        app
+
+    build-depends:
+        base ^>=4.22.0.0
+        , haskell-starter-kit
+
+test-suite tests
+    type: exitcode-stdio-1.0
+
+    import: extensions
+    import: ghc-options
+
+    main-is:
+        Spec.hs
+
+    hs-source-dirs:
+        test
+
+    build-depends:
+        base ^>=4.22.0.0
+        , haskell-starter-kit
+        , hspec

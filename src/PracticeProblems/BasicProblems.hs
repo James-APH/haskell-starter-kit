@@ -1,15 +1,17 @@
-module BasicProblems (
+module PracticeProblems.BasicProblems (
     gcd_,
     lcm_,
     countDigits_,
     fac_,
-    fib,
+    fib_,
     sumDigits_,
-    isP,
-    countVowels,
-    fizzbuzz,
-    isSorted,
+    isP_,
+    countVowels_,
+    fizzbuzz_,
+    isSorted_,
 ) where
+
+import OpsAndAlgorithms.BasicOps
 
 --------------------------------------------------------------------------------
 -- Problems with Integers / Numbers
@@ -30,14 +32,14 @@ lcm_ x y
     | x < 0 || y < 0 = -1
     | x + y == 0 || x + y == x || x + y == y = 0
     | x == 1 || y == 1 = 1
-    | otherwise = x * y div gcd x y
+    | otherwise = x * div y (gcd x y)
 
 -- Count Digits
 countDigits_ :: Integer -> Integer
 countDigits_ i
-    | i < 0 = countDigits (-i)
+    | i < 0 = countDigits_ (-i)
     | i < 10 = 1
-    | otherwise = 1 + countDigits (div i 10)
+    | otherwise = 1 + countDigits_ (div i 10)
 
 -- Factorial
 fac_ :: Integer -> Integer
@@ -55,7 +57,8 @@ fib_ i
 -- Sum Digits
 sumDigits_ :: Integer -> Integer
 sumDigits_ i
-    | abs_ i < 10 = i
+    | i < 0 = sumDigits_ (abs_ i)
+    | i < 10 = i
     | otherwise = rem i 10 + sumDigits_ (div i 10)
 
 --------------------------------------------------------------------------------
@@ -66,8 +69,8 @@ sumDigits_ i
 isP_ :: String -> Bool
 isP_ str
     | null_ str || len_ == 1 = True
-    | first_ str /= last_ str = False
-    | otherwise = isP_ (substr_ str 1 (len_ - 1))
+    | head_ str /= last_ str = False
+    | otherwise = maybe False isP_ (substr_ str 1 (len_ - 1))
   where
     len_ = length_ str
 
@@ -75,7 +78,7 @@ isP_ str
 countVowels_ :: [Char] -> Integer
 countVowels_ [] = 0
 countVowels_ (x : xs)
-    | any_ (== x) "aeiou" = 1 + countVowels_ xs
+    | anyOf_ (== x) "aeiou" = 1 + countVowels_ xs
     | otherwise = 0 + countVowels_ xs
 
 --------------------------------------------------------------------------------
@@ -84,13 +87,16 @@ countVowels_ (x : xs)
 
 -- FizzBuzz
 fizzbuzz_ :: Integer -> [String]
-fizzbuzz_ 0 = "FizzBuzz"
-fizzbuzz_ i
-    | i < 0 = []
-    | rem i 3 == 0 && rem i 5 == 0 = fizzbuzz_ (i - 1) ++ ["FizzBuzz"]
-    | rem i 3 == 0 = fizzbuzz_ (i - 1) ++ ["Fizz"]
-    | rem i 5 == 0 = fizzbuzz_ (i - 1) ++ ["Buzz"]
-    | otherwise = fizzbuzz_ (i - 1) ++ [show i]
+fizzbuzz_ i | i < 0 = []
+fizzbuzz_ 0 = []
+fizzbuzz_ i =
+    fizzbuzz_ (i - 1)
+        ++ [ case (rem i 3, rem i 5) of
+                (0, 0) -> "FizzBuzz"
+                (0, _) -> "Fizz"
+                (_, 0) -> "Buzz"
+                (_, _) -> show i
+           ]
 
 -- Is Sorted
 isSorted_ :: (Ord a) => [a] -> Bool
