@@ -3,7 +3,12 @@ module BasicProblems (
     lcm_,
     countDigits_,
     fac_,
-    fib_,
+    fib,
+    sumDigits_,
+    isP,
+    countVowels,
+    fizzbuzz,
+    isSorted,
 ) where
 
 --------------------------------------------------------------------------------
@@ -21,6 +26,12 @@ gcd_ x y
 
 -- LCM
 lcm_ :: Integer -> Integer -> Integer
+lcm_ x y
+    | x < 0 || y < 0 = -1
+    | x + y == 0 || x + y == x || x + y == y = 0
+    | x == 1 || y == 1 = 1
+    | otherwise = x * y div gcd x y
+
 -- Count Digits
 countDigits_ :: Integer -> Integer
 countDigits_ i
@@ -35,66 +46,56 @@ fac_ i
     | otherwise = product_ [1 .. i]
 
 -- Fibonacci
-fib :: Integer -> Integer
-fib i
+fib_ :: Integer -> Integer
+fib_ i
     | i <= 0 = 0
     | i == 1 = 1
-    | otherwise = fib (i - 1) + fib (i - 2)
+    | otherwise = fib_ (i - 1) + fib_ (i - 2)
 
 -- Sum Digits
 sumDigits_ :: Integer -> Integer
-sumDigits_
-
--- Reverse Number
+sumDigits_ i
+    | abs_ i < 10 = i
+    | otherwise = rem i 10 + sumDigits_ (div i 10)
 
 --------------------------------------------------------------------------------
 -- Problems with Characters & Strings
 --------------------------------------------------------------------------------
 
 -- Palindrome Checker
-isP :: String -> Bool
-isP str
+isP_ :: String -> Bool
+isP_ str
     | null_ str || len_ == 1 = True
     | first_ str /= last_ str = False
-    | otherwise = isP (substr_ str 1 (len_ - 1))
+    | otherwise = isP_ (substr_ str 1 (len_ - 1))
   where
     len_ = length_ str
 
 -- Count Vowels
-countVowels :: [Char] -> Integer
-countVowels [] = 0
-countVowels (x : xs)
-    | any_ (== x) "aeiou" = 1 + countVowels xs
-    | otherwise = 0 + countVowels xs
-
--- Count Words
+countVowels_ :: [Char] -> Integer
+countVowels_ [] = 0
+countVowels_ (x : xs)
+    | any_ (== x) "aeiou" = 1 + countVowels_ xs
+    | otherwise = 0 + countVowels_ xs
 
 --------------------------------------------------------------------------------
 -- Problems with lists
 --------------------------------------------------------------------------------
 
 -- FizzBuzz
-fizzbuzz :: Integer -> [String]
-fizzbuss 0 = "FizzBuzz"
-fizzbuzz i
+fizzbuzz_ :: Integer -> [String]
+fizzbuzz_ 0 = "FizzBuzz"
+fizzbuzz_ i
     | i < 0 = []
-    | rem i 3 == 0 && rem i 5 == 0 = fizzbuzz (i - 1) ++ ["FizzBuzz"]
-    | rem i 3 == 0 = fizzbuzz (i - 1) ++ ["Fizz"]
-    | rem i 5 == 0 = fizzbuzz (i - 1) ++ ["Buzz"]
-    | otherwise = fizzbuzz (i - 1) ++ [show i]
+    | rem i 3 == 0 && rem i 5 == 0 = fizzbuzz_ (i - 1) ++ ["FizzBuzz"]
+    | rem i 3 == 0 = fizzbuzz_ (i - 1) ++ ["Fizz"]
+    | rem i 5 == 0 = fizzbuzz_ (i - 1) ++ ["Buzz"]
+    | otherwise = fizzbuzz_ (i - 1) ++ [show i]
 
 -- Is Sorted
-isSorted :: (Ord a) => [a] -> Bool
-isSorted [] = True
-isSorted [_] = True
-isSorted (x : y : xs)
-    | x <= y = isSorted (y : xs)
+isSorted_ :: (Ord a) => [a] -> Bool
+isSorted_ [] = True
+isSorted_ [_] = True
+isSorted_ (x : y : xs)
+    | x <= y = isSorted_ (y : xs)
     | otherwise = False
-
--- Caesar Cipher
-
--- Rot13
-
--- Flatten
-
--- Remove Duplicates

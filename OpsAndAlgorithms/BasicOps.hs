@@ -10,13 +10,17 @@ module BasicOps (
     reverse_,
     max_,
     min_,
-    contains_,
-    count_,
-    filter_,
     maxElement_,
     minElement_,
-    any_,
-    all_,
+    minmax_,
+    contains_,
+    count_,
+    countIf_,
+    filter_,
+    anyOf_,
+    allOf_,
+    noneOf_,
+    substr_,
     take_,
     drop_,
     takeWhile_,
@@ -24,6 +28,11 @@ module BasicOps (
     map_,
     sum_,
     product_,
+    zip_,
+    zipWith_,
+    replace_,
+    foldl_,
+    foldr_,
 ) where
 
 --------------------------------------------------------------------------------
@@ -43,7 +52,7 @@ tail_ (_ : xs) = Just xs
 -- Returns true if a list provided is empty
 null_ :: [a] -> Bool
 null_ [] = True
-null_ = False
+null_ _ = False
 
 -- Returns the opposite of the provided bool value
 not_ :: Bool -> Bool
@@ -63,9 +72,9 @@ isOdd_ i = rem i 2 == 1
 --------------------------------------------------------------------------------
 
 -- Gets the length of a list
-length_ :: [a] -> Maybe Integer
-length_ [] = Just 0
-length_ (_ : xs) = Just 1 + xs
+length_ :: [a] -> Integer
+length_ [] = 0
+length_ (_ : xs) = 1 + length_ xs
 
 -- Gets the last element of a list
 last_ :: [a] -> Maybe a
@@ -83,16 +92,31 @@ reverse_ (x : xs) = reverse_ xs ++ [x]
 --------------------------------------------------------------------------------
 
 -- Takes two values, returns the largest
-max_ :: a -> a -> a
+max_ :: (Ord a) => a -> a -> a
 max_ a b
     | a > b = a
     | otherwise = b
 
 -- Takes two values, returns the smallest
-min_ :: a -> a -> a
+min_ :: (Ord a) => a -> a -> a
 min_ a b
     | a < b = a
     | otherwise = b
+
+-- Returns the max element from a list, or nothing if the list is empty
+maxElement_ :: (Ord a) => [a] -> Maybe a
+maxElement_ [] = Nothing
+maxElement_ [x] = Just x
+maxElement_ (x : xs) = max_ x <$> maxElement_ xs
+
+-- Returns the min element from a list, or nothing if the list is empty
+minElement_ :: (Ord a) => [a] -> Maybe a
+minElement_ [] = Nothing
+minElement_ [x] = Just x
+minElement_ (x : xs) = min_ x <$> minElement_ xs
+
+minmax_ :: (Ord a) => a -> a -> (a, a)
+minmax_ a b = (min_ a b, max_ a b)
 
 -- Checks if a list has a certain element
 contains_ :: a -> [a] -> Bool
@@ -121,45 +145,40 @@ filter_ fn (x : xs)
     | not_ (fn x) = filter_ fn xs
     | otherwise = x : filter_ fn xs
 
--- Returns the max element from a list, or nothing if the list is empty
-maxElement_ :: (Ord a) => [a] -> Maybe a
-maxElement_ [] = Nothing
-maxElement_ [x] = Just x
-maxElement_ (x : xs) = max_ x <$> maxElement_ xs
-
--- Returns the min element from a list, or nothing if the list is empty
-minElement_ :: (Ord a) => [a] -> Maybe a
-minElement_ [] = Nothing
-minElement_ [x] = Just x
-minElement_ (x : xs) = min_ x <$> minElement_ xs
-
-minMaxElement_
-
 -- Returns true if any element fits the requirments of the function provided
 -- Returns false otherwise
-anyOf :: (a -> Bool) -> [a] -> Bool
-anyOf _ [] = False
-anyOf f [x] = f x
-anyOf f (x : xs) = f x || any_ f xs
+anyOf_ :: (a -> Bool) -> [a] -> Bool
+anyOf_ _ [] = False
+anyOf_ f [x] = f x
+anyOf_ f (x : xs) = f x || any_ f xs
 
 -- Returns true if all of the elements fit the requirements of the function provided
 -- Returns false otherwise
-allOf :: (a -> Bool) -> [a] -> Bool
-allOf _ [] = False
-allOf f [x] = f x
-allOf f (x : xs) = f x && any_ f xs
+allOf_ :: (a -> Bool) -> [a] -> Bool
+allOf_ _ [] = False
+allOf_ f [x] = f x
+allOf_ f (x : xs) = f x && any_ f xs
 
 -- Returns true if none of the elements fit the requirments of the function provided
 -- Returns false otherwise
-noneOf :: (a -> Bool) -> [a] -> Bool
-noneOf _ [] = True
-noneOf f [x] = f x
-noneOf f (x : xs) = not_ f x && f xs
+noneOf_ :: (a -> Bool) -> [a] -> Bool
+noneOf_ _ [] = True
+noneOf_ f [x] = f x
+noneOf_ f (x : xs) = not_ f x && f xs
 
 --------------------------------------------------------------------------------
 -- String Operations
 --------------------------------------------------------------------------------
 
+stringLowercase_ = "abcdefghijklmnopqrstuvwxyz"
+stringUppercase_ = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+stringDigits_ = "0123456789"
+stringHexDigits_ = "0123456789abcdefABCDEF"
+stringOctDigits_ = "01234567"
+stringPunctuation_ = "#$%&'()*+,-./:;<=>?@[\\]^_`{|}~"
+stringLetters_ = stringUppercase ++ stringLowercase
+
+-- Gets a substring from a string, beginning is inclusive, end is exclusive:where
 substr_ :: String -> Int -> Int -> Maybe String
 substr_ str bi ei | ei < 0 || bi > len_ || ei > len_ || bi > ei = Nothing
 substr_ str bi ei =
@@ -167,8 +186,16 @@ substr_ str bi ei =
   where
     len_ = length_ str
 
-split_ :: String -> Char -> [String]
-splitAt_ :: Integer -> String -> [String]
+--------------------------------------------------------------------------------
+-- Math Operations
+--------------------------------------------------------------------------------
+
+-- Absolute Value
+abs_ :: (Num a) => a -> a
+abs_ i
+    | i < 0 = -i
+    | otherwise = i
+
 --------------------------------------------------------------------------------
 -- Take & Drop Functions
 --------------------------------------------------------------------------------
@@ -229,7 +256,9 @@ zipWith_ _ x [] = []
 zipWith_ _ [] y = []
 zipWith_ f (x : xs) (y : ys) = f x y : zipWith_ f xs ys
 
-replace_ :: a -> [a] -> [a]
+replace_ :: (Eq a) => [a] -> a -> a -> [a]
+replace_ arr v rv = map_ (\x -> if x == v then rv else x) arr
+
 --------------------------------------------------------------------------------
 -- Folds
 --------------------------------------------------------------------------------
@@ -241,27 +270,3 @@ foldl_ f z (x : xs) = foldl_ f (f z x) xs
 foldr_ :: (a -> b -> b) -> b -> [a] -> b
 foldr_ f z [] = z
 foldr_ f z (x : xs) = f x (foldr_ f z xs)
-
---------------------------------------------------------------------------------
--- List Structure Manipulation
---------------------------------------------------------------------------------
-
-rotateLeft_ :: Integer -> [a] -> [a]
-rotateLeft_ _ [] = []
-rotateLeft_ 0 lis = lis
-rotateLeft_ i (x : xs)
-    | i < 0 = x : xs
-    | otherwise = rotateLeft_ (i - 1) xs ++ x
-
-rotateRight_ :: Integer -> [a] -> [a]
-rotateRight_ _ [] = []
-rotateRight_ 0 lis = lis
-rotateRight_ i (x : xs)
-    | i < 0 = x : xs
-    | otherwise = rotateRight_
-
-rotate_ :: Integer -> [a] -> [a]
-rotate_ _ [] = []
-rotate_ i lis
-    | i < 0 = rotateLeft_ (-i) lis
-    | otherwise = rotateRight_ i lis
