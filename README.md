@@ -1,7 +1,7 @@
 # Haskell Starter Kit
 
 This is a collection of general operations and simple brain-teasers to help me
-grasp the Haskell programming language.
+get a bit of a grasp on the Haskell Programming Language.
 
 ## Basic Operations
 
